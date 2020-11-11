@@ -13,9 +13,6 @@ const getModuleAsync = async loader => {
   return (await loader()).default
 }
 
-
-
-
 const startApp = (appConfig: AppConfig) => {
 
   const { port, mode, root, src, publicPath, staticPath, out, publish } = appConfig
@@ -95,8 +92,8 @@ const startApp = (appConfig: AppConfig) => {
         </head>
         <body>
           <div id="mvc-app-container">${ctrl.name}</div>
-         <script src="${clientWebpackConfig.output.publicPath}${asserts.vendor}"></script>
-         <script src="${clientWebpackConfig.output.publicPath}${asserts.main}"></script>
+           <script src="${clientWebpackConfig.output.publicPath}${asserts.vendor}"></script>
+           <script src="${clientWebpackConfig.output.publicPath}${asserts.main}"></script>
         </body>
        </html>
       `)
