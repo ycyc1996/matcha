@@ -3,6 +3,7 @@ const path = require('path')
 const { start } = require('../dist/src').default
 
 const cwd = process.cwd()
+
 const args = process.argv.slice(2)
 
 console.log(args)

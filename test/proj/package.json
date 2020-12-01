@@ -1,0 +1,10 @@
+{
+  "name": "proj",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "matcha start"
+  },
+  "author": "",
+  "license": "ISC"
+}

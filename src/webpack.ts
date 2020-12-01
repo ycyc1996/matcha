@@ -14,14 +14,15 @@ export const createClientWebpackConfig = (appConfig: AppConfig): any => {
 
   console.log('entry', entry)
 
-  console.log('out', path.join(appConfig.root, appConfig.staticPath))
   const output = {
     libraryTarget: 'window',
-    path: path.join(appConfig.root, appConfig.staticPath),
+    path: path.join(path.join(appConfig.root, appConfig.out), appConfig.staticPath),
     filename: 'js/main.js',
     chunkFilename: 'js/[name].js',
-    publicPath: '/assets/'
+    publicPath: appConfig.staticPath
   }
+
+  console.log(output.path)
 
   const rules = [
     { parser: { requireEnsure: false } },

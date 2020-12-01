@@ -57,8 +57,9 @@ const startApp = (appConfig: AppConfig) => {
   })
 
   app.use(webpackDevMiddleware(webpack(clientWebpackConfig), {
-    publicPath: clientWebpackConfig.output.publicPath,
-    serverSideRender: true
+    // publicPath: clientWebpackConfig.output.publicPath,
+    // serverSideRender: true,
+    writeToDisk: true
   }))
 
   app.use(appConfig.publicPath, async (req, res) => {
