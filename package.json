@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsc --watch",
     "build": "tsc",
-    "lint": "eslint --fix --ext .ts,.js src isomorphic entry",
+    "lint": "eslint --ext .ts,.js .",
+    "lint:fix": "eslint --fix --ext .ts,.js .",
     "test:proj": "node ./test/proj/start.js"
   },
   "bin": "./bin/scripts.js",
@@ -36,6 +37,19 @@
     "eslint-config-standard": "^16.0.2",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^4.2.1"
+    "eslint-plugin-promise": "^4.2.1",
+    "husky": "^4.3.0"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --ext .ts,.js src .",
+      "git add"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "commit-msg": "commitlint -e $HUSKY_GIT_PARAMS"
+    }
   }
 }

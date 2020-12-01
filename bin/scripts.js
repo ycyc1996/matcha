@@ -8,7 +8,6 @@ const args = process.argv.slice(2)
 console.log(args)
 
 if (args.length > 0) {
-
   const action = args[0]
 
   switch (action) {
@@ -25,22 +24,12 @@ if (args.length > 0) {
   }
 }
 
-function commandStart(args) {
+function commandStart (args) {
   console.info('start matcha app')
   const config = require(path.resolve(cwd, 'matcha.config'))
   start(config)
 }
 
-function commandBuild(args) {
+function commandBuild (args) {
   console.info('build matcha app')
 }
-
-
-
-
-
-
-
-
-
-

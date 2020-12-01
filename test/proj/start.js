@@ -10,5 +10,5 @@ matcha.start({
   publish: './publish',
   publicPath: '/app',
   bundleName: 'server.bundle.js',
-  staticPath: '/static/',
+  staticPath: '/static/'
 })
