@@ -2,9 +2,9 @@ import express, { Express } from 'express'
 import path from 'path'
 import { AppConfig } from './types'
 import webpack from 'webpack'
-import webpackDevMiddleware  from 'webpack-dev-middleware'
+import webpackDevMiddleware from 'webpack-dev-middleware'
 import { createServerWebpackConfig, createClientWebpackConfig } from './webpack'
-import createRouter from "../isomorphic/createRouter";
+import createRouter from '../isomorphic/createRouter'
 
 const NODE_ENV = process.env.NODE_ENV || 'development'
 
@@ -14,7 +14,6 @@ const getModuleAsync = async loader => {
 }
 
 const startApp = (appConfig: AppConfig) => {
-
   const { port, mode, root, src, publicPath, staticPath, out, publish } = appConfig
 
   const app: Express = express()
@@ -37,22 +36,10 @@ const startApp = (appConfig: AppConfig) => {
   `)
   })
 
-
-  let routes = []
-
   const clientWebpackConfig = createClientWebpackConfig(appConfig)
 
-  const clientCompiler = webpack(clientWebpackConfig)
-  app.use(webpackDevMiddleware(clientCompiler, {
-    publicPath: clientWebpackConfig.output.publicPath,
-    serverSideRender: true,
-  }))
-
-
-  let  serverRouter = createRouter([])
-
-  const serverWebpackConfig = createServerWebpackConfig(appConfig)
-  const serverCompiler = webpack(serverWebpackConfig, async (err, stats: webpack.Stats) => {
+  let serverRouter = createRouter([])
+  webpack(createServerWebpackConfig(appConfig), async (err, stats: webpack.Stats) => {
     console.log(err)
     console.log(stats.toString({ colors: true }))
     const { outputPath } = stats.toJson()
@@ -69,21 +56,24 @@ const startApp = (appConfig: AppConfig) => {
     }
   })
 
-
+  app.use(webpackDevMiddleware(webpack(clientWebpackConfig), {
+    publicPath: clientWebpackConfig.output.publicPath,
+    serverSideRender: true
+  }))
 
   app.use(appConfig.publicPath, async (req, res) => {
     const asserts = res.locals.webpackStats.toJson().assetsByChunkName
     const route = serverRouter(req.path)
 
     if (!route) {
-      res.end(`404`)
+      res.end('404')
       return
     }
 
     console.log(route)
 
-    const appCtrlClass = await getModuleAsync(route.loader)
-    const ctrl = new appCtrlClass()
+    const AppCtrlClass = await getModuleAsync(route.loader)
+    const ctrl = new AppCtrlClass()
 
     res.end(`
       <html>
@@ -98,8 +88,6 @@ const startApp = (appConfig: AppConfig) => {
        </html>
       `)
   })
-
 }
-
 
 export default startApp

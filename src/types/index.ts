@@ -10,9 +10,7 @@ export interface AppConfig {
   publicPath: string;
 }
 
-
 export interface Route {
   patterns: string[];
   loader: Function;
 }
-

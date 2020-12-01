@@ -8,24 +8,20 @@ const getModuleAsync = async loader => {
 }
 
 const start = async () => {
-
   const clientRouter = createRouter(routes)
 
   const pathname = window.location.pathname
 
   const route = clientRouter(pathname)
 
-  if (!!route) {
+  if (route) {
     console.log(route)
-    const appCtrlClass = await getModuleAsync(route.loader)
+    const AppCtrlClass = await getModuleAsync(route.loader)
 
-    const ctrl = new appCtrlClass()
+    const ctrl = new AppCtrlClass()
 
     console.log(ctrl.name)
-
   }
 }
 
 start()
-
-

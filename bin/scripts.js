@@ -7,18 +7,16 @@ const args = process.argv.slice(2)
 
 console.log(args)
 
-
 if (args.length > 0) {
 
   const action = args[0]
-
 
   switch (action) {
     case 'start':
       commandStart(args)
       break
     case 'build':
-      cmomandBuild(args)
+      commandBuild(args)
       break
     case 'help':
       break
@@ -33,7 +31,7 @@ function commandStart(args) {
   start(config)
 }
 
-function cmomandBuild(args) {
+function commandBuild(args) {
   console.info('build matcha app')
 }
 

@@ -1,13 +1,12 @@
 
-
-import { AppConfig  } from './types'
+import { AppConfig } from './types'
 import path from 'path'
 
 const NODE_ENV = process.env.NODE_ENV || 'development'
 
 export const createClientWebpackConfig = (appConfig: AppConfig): any => {
   const webpackConfig = {}
-  const root = path.resolve(appConfig.root, appConfig.src)
+  // const root = path.resolve(appConfig.root, appConfig.src)
   const routes = path.resolve(appConfig.root, appConfig.src)
   const target = 'web'
   const mode = NODE_ENV
@@ -20,7 +19,7 @@ export const createClientWebpackConfig = (appConfig: AppConfig): any => {
     libraryTarget: 'window',
     path: path.join(appConfig.root, appConfig.staticPath),
     filename: 'js/main.js',
-    chunkFilename: `js/[name].js`,
+    chunkFilename: 'js/[name].js',
     publicPath: '/assets/'
   }
 
@@ -39,8 +38,8 @@ export const createClientWebpackConfig = (appConfig: AppConfig): any => {
             { isTSX: true, allExtensions: true }
           ]
         ],
-        plugins: ['@babel/plugin-proposal-class-properties', "@babel/plugin-transform-runtime"]
-      },
+        plugins: ['@babel/plugin-proposal-class-properties', '@babel/plugin-transform-runtime']
+      }
     }
   ]
 
@@ -53,12 +52,11 @@ export const createClientWebpackConfig = (appConfig: AppConfig): any => {
 
   const module = { rules }
 
-  const plugins =  []
+  const plugins = []
 
-  const devServer =  {
-    stats: "verbose"
+  const devServer = {
+    stats: 'verbose'
   }
-
 
   const optimization = {
     // Automatically split vendor and commons
@@ -79,15 +77,14 @@ export const createClientWebpackConfig = (appConfig: AppConfig): any => {
     resolve,
     plugins,
     devServer,
-    optimization,
+    optimization
   })
   return webpackConfig
 }
 
-
 export const createServerWebpackConfig = (appConfig: AppConfig) => {
   const webpackConfig = {}
-  const root = path.resolve(appConfig.root, appConfig.src)
+  // const root = path.resolve(appConfig.root, appConfig.src)
   const routes = path.resolve(appConfig.root, appConfig.src)
   const target = 'node'
   const mode = NODE_ENV
@@ -99,7 +96,7 @@ export const createServerWebpackConfig = (appConfig: AppConfig) => {
     path: path.join(appConfig.root, appConfig.out),
     libraryTarget: 'commonjs2',
     filename: 'main.js',
-    chunkFilename: `[name].js`
+    chunkFilename: '[name].js'
   }
   const rules = [
     { parser: { requireEnsure: false } },
@@ -116,8 +113,8 @@ export const createServerWebpackConfig = (appConfig: AppConfig) => {
             { isTSX: true, allExtensions: true }
           ]
         ],
-        plugins: ['@babel/plugin-proposal-class-properties', "@babel/plugin-transform-runtime"]
-      },
+        plugins: ['@babel/plugin-proposal-class-properties', '@babel/plugin-transform-runtime']
+      }
     }
   ]
 
@@ -132,8 +129,8 @@ export const createServerWebpackConfig = (appConfig: AppConfig) => {
 
   const plugins = []
 
-  const devServer =  {
-    stats: "verbose"
+  const devServer = {
+    stats: 'verbose'
   }
 
   const watch = true

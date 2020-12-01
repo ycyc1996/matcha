@@ -1,4 +1,4 @@
-import {  Route } from '../src/types'
+import { Route } from '../src/types'
 
 const createRouter = (entries: Route[], load = false) => {
   return (path: string) => {
