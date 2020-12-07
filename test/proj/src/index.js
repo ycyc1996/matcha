@@ -1,10 +1,10 @@
 export default [
   {
     patterns: ['/', '/home'],
-    loader: () => import('./home/controller')
+    loader: () => import(/* webpackChunkName: 'home' */'./home/controller')
   },
   {
     patterns: ['/tst', '/test'],
-    loader: () => import('./test/controller')
+    loader: () => import(/* webpackChunkName: 'test' */'./test/controller')
   }
 ]

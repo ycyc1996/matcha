@@ -15,7 +15,7 @@ export const createClientWebpackConfig = (appConfig: AppConfig): any => {
   console.log('entry', entry)
 
   const output = {
-    libraryTarget: 'window',
+    // libraryTarget: 'window',
     path: path.join(path.join(appConfig.root, appConfig.out), appConfig.staticPath),
     filename: 'js/main.js',
     chunkFilename: 'js/[name].js',

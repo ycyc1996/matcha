@@ -4,7 +4,7 @@ import { AppConfig } from './types'
 import webpack from 'webpack'
 import webpackDevMiddleware from 'webpack-dev-middleware'
 import { createServerWebpackConfig, createClientWebpackConfig } from './webpack'
-import createRouter from '../isomorphic/createRouter'
+import createRouter from './isomorphic/createRouter'
 
 const NODE_ENV = process.env.NODE_ENV || 'development'
 
@@ -57,8 +57,8 @@ const startApp = (appConfig: AppConfig) => {
   })
 
   app.use(webpackDevMiddleware(webpack(clientWebpackConfig), {
-    // publicPath: clientWebpackConfig.output.publicPath,
-    // serverSideRender: true,
+    publicPath: clientWebpackConfig.output.publicPath,
+    serverSideRender: true,
     writeToDisk: true
   }))
 
