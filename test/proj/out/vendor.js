@@ -1,4 +1,4 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([["vendor"],{"./node_modules/@babel/runtime/helpers/assertThisInitialized.js":
+exports.ids=["vendor"],exports.modules={"./node_modules/@babel/runtime/helpers/assertThisInitialized.js":
 /*!**********************************************************************!*\
   !*** ./node_modules/@babel/runtime/helpers/assertThisInitialized.js ***!
   \**********************************************************************/
@@ -42,4 +42,4 @@
 /*!***********************************************!*\
   !*** ./test/proj/node_modules/react/index.js ***!
   \***********************************************/
-/*! no static exports found */function(module,exports,__webpack_require__){"use strict";eval('\n\nif (false) {} else {\n  module.exports = __webpack_require__(/*! ./cjs/react.development.js */ "./test/proj/node_modules/react/cjs/react.development.js");\n}\n\n\n//# sourceURL=webpack:///./test/proj/node_modules/react/index.js?')}}]);
+/*! no static exports found */function(module,exports,__webpack_require__){"use strict";eval('\n\nif (false) {} else {\n  module.exports = __webpack_require__(/*! ./cjs/react.development.js */ "./test/proj/node_modules/react/cjs/react.development.js");\n}\n\n\n//# sourceURL=webpack:///./test/proj/node_modules/react/index.js?')}};

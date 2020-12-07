@@ -10,12 +10,12 @@ export const createClientWebpackConfig = (appConfig: AppConfig): any => {
   const routes = path.resolve(appConfig.root, appConfig.src)
   const target = 'web'
   const mode = NODE_ENV
-  const entry = path.resolve(__dirname, '../../entry/client')
+  const entry = path.resolve(__dirname, './isomorphic/entry/client')
 
   console.log('entry', entry)
 
   const output = {
-    // libraryTarget: 'window',
+    libraryTarget: 'window',
     path: path.join(path.join(appConfig.root, appConfig.out), appConfig.staticPath),
     filename: 'js/main.js',
     chunkFilename: 'js/[name].js',

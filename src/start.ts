@@ -49,7 +49,6 @@ const startApp = (appConfig: AppConfig) => {
 
       for (let i = 0; i < _routes.length; i++) {
         const module = await getModuleAsync(_routes[i].loader)
-        console.log(module)
         _routes.loader = () => module
       }
       serverRouter = createRouter(_routes)
@@ -66,12 +65,12 @@ const startApp = (appConfig: AppConfig) => {
     const asserts = res.locals.webpackStats.toJson().assetsByChunkName
     const route = serverRouter(req.path)
 
+    console.log(asserts)
+
     if (!route) {
       res.end('404')
       return
     }
-
-    console.log(route)
 
     const AppCtrlClass = await getModuleAsync(route.loader)
     const ctrl = new AppCtrlClass()

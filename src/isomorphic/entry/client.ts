@@ -1,6 +1,7 @@
 // @ts-ignore
 import routes from '@routes'
-import createRouter from '../src/isomorphic/createRouter'
+import createRouter from '../createRouter'
+
 console.log(routes)
 
 const getModuleAsync = async loader => {
