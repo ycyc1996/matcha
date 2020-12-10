@@ -98,7 +98,7 @@ export const createServerWebpackConfig = (appConfig: AppConfig) => {
     path: path.join(appConfig.root, appConfig.out),
     libraryTarget: 'commonjs2',
     filename: 'main.js',
-    chunkFilename: '[name].js'
+    chunkFilename: '[name].[contenthash].js'
   }
   const rules = [
     { parser: { requireEnsure: false } },

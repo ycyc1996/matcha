@@ -3,7 +3,7 @@ import { Controller, ControllerFactory } from '../types'
 import createStore from './createStore'
 
 const createApp = async (AppCtrlClass: ControllerFactory<any>, {
-  isServer, initialState
+  isServer, initialState, isClient, location
 }) => {
   const ctrl: Controller<any> = new AppCtrlClass({})
 
@@ -34,7 +34,7 @@ const createApp = async (AppCtrlClass: ControllerFactory<any>, {
 
     useEffect(() => {
       return () => ctrl.beforeUnMount()
-    })
+    }, [])
 
     return (
       <div id="matcha-app-container">

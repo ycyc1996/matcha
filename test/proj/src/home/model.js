@@ -1,5 +1,9 @@
 export const initialState = {
-  count: 0
+  count: 0,
+  form: {
+    name: '',
+    age: '',
+  }
 }
 
 export const actions = {
@@ -16,6 +20,16 @@ export const actions = {
     return {
       ...state,
       count:  0
+    }
+  },
+
+  UPDATE_FORM_DATA: (state, payload) => {
+    return {
+      ...state,
+      form: {
+        ...state.form,
+        ...payload,
+      }
     }
   }
 }
