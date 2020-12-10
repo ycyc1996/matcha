@@ -1,6 +1,7 @@
 
 import { AppConfig } from './types'
 import path from 'path'
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 
 const NODE_ENV = process.env.NODE_ENV || 'development'
 
@@ -18,7 +19,7 @@ export const createClientWebpackConfig = (appConfig: AppConfig): any => {
     libraryTarget: 'window',
     path: path.join(path.join(appConfig.root, appConfig.out), appConfig.staticPath),
     filename: 'js/main.js',
-    chunkFilename: 'js/[name].js',
+    chunkFilename: 'js/[name].[contenthash]js',
     publicPath: appConfig.staticPath
   }
 
@@ -128,7 +129,9 @@ export const createServerWebpackConfig = (appConfig: AppConfig) => {
 
   const module = { rules }
 
-  const plugins = []
+  const plugins = [
+    new CleanWebpackPlugin()
+  ]
 
   const devServer = {
     stats: 'verbose'

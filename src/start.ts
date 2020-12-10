@@ -1,10 +1,12 @@
 import express, { Express } from 'express'
 import path from 'path'
-import { AppConfig } from './types'
+import { AppConfig, ControllerFactory } from './types'
 import webpack from 'webpack'
 import webpackDevMiddleware from 'webpack-dev-middleware'
 import { createServerWebpackConfig, createClientWebpackConfig } from './webpack'
 import createRouter from './isomorphic/createRouter'
+import createApp from './isomorphic/createApp'
+import { renderToString } from 'react-dom/server'
 
 const NODE_ENV = process.env.NODE_ENV || 'development'
 
@@ -43,14 +45,11 @@ const startApp = (appConfig: AppConfig) => {
     console.log(err)
     console.log(stats.toString({ colors: true }))
     const { outputPath } = stats.toJson()
-
     if (outputPath) {
-      const _routes = (await import(path.resolve(outputPath, 'main'))).default
-
-      for (let i = 0; i < _routes.length; i++) {
-        const module = await getModuleAsync(_routes[i].loader)
-        _routes.loader = () => module
-      }
+      const mainPath = path.resolve(outputPath, 'main')
+      delete require.cache[require.resolve(mainPath)]
+      const _routes = (require(mainPath)).default
+      console.log(_routes)
       serverRouter = createRouter(_routes)
     }
   })
@@ -65,23 +64,34 @@ const startApp = (appConfig: AppConfig) => {
     const asserts = res.locals.webpackStats.toJson().assetsByChunkName
     const route = serverRouter(req.path)
 
-    console.log(asserts)
-
     if (!route) {
       res.end('404')
       return
     }
 
     const AppCtrlClass = await getModuleAsync(route.loader)
-    const ctrl = new AppCtrlClass()
+
+    const app = await createApp(AppCtrlClass as ControllerFactory<any>, {
+      isServer: true,
+      isClient: false,
+      location: {},
+      initialState: {}
+    })
+
+    const ctrl = app.getCtrl()
+    const content = ctrl.ssr ? renderToString(app.renderView()) : ''
+    const __InitialState__: any = ctrl.ssr ? ctrl.store?.getState() : null
 
     res.end(`
       <html>
         <head>
-            <title>${ctrl.name}</title>
+            <title>matcha</title>
         </head>
         <body>
-          <div id="mvc-app-container">${ctrl.name}</div>
+          <script>
+            window.__InitialState__ = ${JSON.stringify(__InitialState__)}      
+          </script>
+          <div id="matcha-app-root">${content}</div>
            <script src="${clientWebpackConfig.output.publicPath}${asserts.vendor}"></script>
            <script src="${clientWebpackConfig.output.publicPath}${asserts.main}"></script>
         </body>

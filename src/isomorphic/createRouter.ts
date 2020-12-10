@@ -1,10 +1,10 @@
 import { Route } from '../types'
 
-const createRouter = (entries: Route[], load = false) => {
+const createRouter = (routes: Route[], load = false) => {
   return (path: string) => {
-    console.log(entries)
-    return entries.find(entry => {
-      return entry.patterns.some(parttern => path.endsWith(parttern))
+    return routes.find(route => {
+      console.log(route.patterns, path)
+      return route.patterns.some(parttern => path.endsWith(path))
     }) || null
   }
 }
