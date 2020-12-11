@@ -19,4 +19,10 @@ export default class extends AppController {
       ])
     }, 1000)
   }
+
+
+  submitForm = async () => {
+    console.log('1213')
+    alert(JSON.stringify(this.store.getState().form))
+  }
 }

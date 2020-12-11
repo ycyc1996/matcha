@@ -52,7 +52,6 @@ export interface Work {
   createTime: Number;
   callback: Function;
 }
-
 // export type Dispacher<ModelState> = (...args: any[]) => void;
 
 export type ModelAction<ModelState> = (state: ModelState, ...args: any[]) => ModelState

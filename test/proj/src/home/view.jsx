@@ -1,13 +1,11 @@
 import React from 'react'
 
 const View = ({ state, dispatchers, ctrl }) => {
-  console.log(state, dispatchers, ctrl)
 
-  const submit = () => {
-    alert(JSON.stringify(state.form))
-  }
+  console.log(ctrl)
 
   const onNameChange = (e) => dispatchers.UPDATE_FORM_DATA({ name: e.target.value })
+
   const onAgeChange = (e) => dispatchers.UPDATE_FORM_DATA({ age: e.target.value })
 
   return (
@@ -25,7 +23,7 @@ const View = ({ state, dispatchers, ctrl }) => {
       <br/>
       <input type="text" value={state.form.age} onChange={onAgeChange}/>
       <br/>
-      <button onClick={submit}>submit</button>
+      <button onClick={ctrl.submitForm}>submit</button>
     </div>
   )
 }
