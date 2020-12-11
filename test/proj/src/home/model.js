@@ -3,7 +3,8 @@ export const initialState = {
   form: {
     name: '',
     age: '',
-  }
+  },
+  messages: []
 }
 
 export const actions = {
@@ -30,6 +31,13 @@ export const actions = {
         ...state.form,
         ...payload,
       }
+    }
+  },
+
+  UPDATE_MESSAGES: (state, payload) => {
+    return {
+      ...state,
+      messages: [...payload]
     }
   }
 }

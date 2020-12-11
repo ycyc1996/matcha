@@ -1,4 +1,4 @@
-import AppController from "../../../../dist/src/isomorphic/controller"
+import AppController from "matcha/isomorphic/controller"
 import React from 'react'
 
 export default class extends AppController {

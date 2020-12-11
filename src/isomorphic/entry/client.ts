@@ -20,6 +20,7 @@ const start = async () => {
     console.log(route)
     const AppCtrlClass = await getModuleAsync(route.loader)
 
+    // @ts-ignore
     const initialState = window.__InitialState__ || null
 
     const app = await createApp(AppCtrlClass, {

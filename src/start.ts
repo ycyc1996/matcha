@@ -11,7 +11,6 @@ import { renderToString } from 'react-dom/server'
 const NODE_ENV = process.env.NODE_ENV || 'development'
 
 const getModuleAsync = async loader => {
-  console.log(loader)
   return (await loader()).default
 }
 
@@ -49,7 +48,6 @@ const startApp = (appConfig: AppConfig) => {
       const mainPath = path.resolve(outputPath, 'main')
       delete require.cache[require.resolve(mainPath)]
       const _routes = (require(mainPath)).default
-      console.log(_routes)
       serverRouter = createRouter(_routes)
     }
   })
@@ -63,6 +61,7 @@ const startApp = (appConfig: AppConfig) => {
   app.use(appConfig.publicPath, async (req, res) => {
     const asserts = res.locals.webpackStats.toJson().assetsByChunkName
     const route = serverRouter(req.path)
+    console.log(asserts)
 
     if (!route) {
       res.end('404')
@@ -92,8 +91,8 @@ const startApp = (appConfig: AppConfig) => {
             window.__InitialState__ = ${JSON.stringify(__InitialState__)}      
           </script>
           <div id="matcha-app-root">${content}</div>
-           <script src="${clientWebpackConfig.output.publicPath}${asserts.vendor}"></script>
-           <script src="${clientWebpackConfig.output.publicPath}${asserts.main}"></script>
+           <script src="${clientWebpackConfig.output.publicPath}${asserts.vendor[0]}"></script>
+           <script src="${clientWebpackConfig.output.publicPath}${asserts.main[0]}"></script>
         </body>
        </html>
       `)

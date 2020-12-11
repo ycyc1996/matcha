@@ -19,15 +19,9 @@ export default abstract class AppController<ModelState> implements Controller<Mo
     console.log(context)
   }
 
-  beforeRender: () => Promise<void> = async () => {
-    console.log('beforeRender')
-  }
+  abstract beforeRender: () => Promise<void>
 
-  afterRender: () => Promise<void> = async () => {
-    console.log('afterRender')
-  }
+  abstract afterRender: () => Promise<void>
 
-  beforeUnMount: () => Promise<void> = async () => {
-    console.log('UnMount')
-  }
+  abstract beforeUnMount: () => Promise<void>
 }

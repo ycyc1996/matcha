@@ -1,7 +1,7 @@
 
 import { AppConfig } from './types'
 import path from 'path'
-const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+import { CleanWebpackPlugin } from 'clean-webpack-plugin'
 
 const NODE_ENV = process.env.NODE_ENV || 'development'
 
@@ -19,7 +19,7 @@ export const createClientWebpackConfig = (appConfig: AppConfig): any => {
     libraryTarget: 'window',
     path: path.join(path.join(appConfig.root, appConfig.out), appConfig.staticPath),
     filename: 'js/main.js',
-    chunkFilename: 'js/[name].[contenthash]js',
+    chunkFilename: 'js/[name].[contenthash].js',
     publicPath: appConfig.staticPath
   }
 
@@ -54,7 +54,11 @@ export const createClientWebpackConfig = (appConfig: AppConfig): any => {
 
   const module = { rules }
 
-  const plugins = []
+  const plugins = [
+    new CleanWebpackPlugin()
+  ]
+
+  const devtool = 'source-map'
 
   const devServer = {
     stats: 'verbose'
@@ -79,7 +83,8 @@ export const createClientWebpackConfig = (appConfig: AppConfig): any => {
     resolve,
     plugins,
     devServer,
-    optimization
+    optimization,
+    devtool
   })
   return webpackConfig
 }
@@ -137,6 +142,8 @@ export const createServerWebpackConfig = (appConfig: AppConfig) => {
     stats: 'verbose'
   }
 
+  const devtool = 'source-map'
+
   const watch = true
 
   const optimization = {
@@ -159,7 +166,8 @@ export const createServerWebpackConfig = (appConfig: AppConfig) => {
     plugins,
     devServer,
     optimization,
-    watch
+    watch,
+    devtool
   })
   return webpackConfig
 }

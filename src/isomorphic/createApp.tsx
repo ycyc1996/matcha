@@ -29,11 +29,13 @@ const createApp = async (AppCtrlClass: ControllerFactory<any>, {
     }, [])
 
     useEffect(() => {
-      ctrl.afterRender()
+      ctrl.afterRender?.()
     }, [])
 
     useEffect(() => {
-      return () => ctrl.beforeUnMount()
+      return () => {
+        ctrl.beforeUnMount?.()
+      }
     }, [])
 
     return (
@@ -44,7 +46,7 @@ const createApp = async (AppCtrlClass: ControllerFactory<any>, {
   }
 
   if ((isServer && ctrl.ssr) || (!isServer && !ctrl.ssr)) {
-    await ctrl.beforeRender()
+    await ctrl.beforeRender?.()
   }
 
   return {
