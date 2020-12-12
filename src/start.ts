@@ -8,8 +8,6 @@ import createRouter from './isomorphic/createRouter'
 import createApp from './isomorphic/createApp'
 import { renderToString } from 'react-dom/server'
 
-const NODE_ENV = process.env.NODE_ENV || 'development'
-
 const getModuleAsync = async loader => {
   return (await loader()).default
 }
@@ -17,12 +15,14 @@ const getModuleAsync = async loader => {
 const startApp = (appConfig: AppConfig) => {
   const { port, mode, root, src, publicPath, staticPath, out, publish } = appConfig
 
+  const isProd = mode === 'production'
+  const isDev = mode === 'development'
+
   const app: Express = express()
 
   app.listen(port, () => {
     console.info(`
     app start, listening port ${port}
-    node-env: ${NODE_ENV}
     mode: ${mode}
     ---------------
     code:
@@ -37,31 +37,39 @@ const startApp = (appConfig: AppConfig) => {
   `)
   })
 
+  console.log(path.resolve(process.cwd(), appConfig.out))
+  let serverRouter = isDev ? createRouter([]) : createRouter(require(path.join(process.cwd(), appConfig.out)).default)
+
+  if (isDev) {
+    webpack(createServerWebpackConfig(appConfig), async (err, stats: webpack.Stats) => {
+      console.log(err)
+      console.log(stats.toString({ colors: true }))
+      const { outputPath } = stats.toJson()
+      if (outputPath) {
+        const mainPath = path.resolve(outputPath, 'index')
+        delete require.cache[require.resolve(mainPath)]
+        const _routes = (require(mainPath)).default
+        serverRouter = createRouter(_routes)
+      }
+    })
+  }
+
   const clientWebpackConfig = createClientWebpackConfig(appConfig)
 
-  let serverRouter = createRouter([])
-  webpack(createServerWebpackConfig(appConfig), async (err, stats: webpack.Stats) => {
-    console.log(err)
-    console.log(stats.toString({ colors: true }))
-    const { outputPath } = stats.toJson()
-    if (outputPath) {
-      const mainPath = path.resolve(outputPath, 'main')
-      delete require.cache[require.resolve(mainPath)]
-      const _routes = (require(mainPath)).default
-      serverRouter = createRouter(_routes)
-    }
-  })
-
-  app.use(webpackDevMiddleware(webpack(clientWebpackConfig), {
-    publicPath: clientWebpackConfig.output.publicPath,
-    serverSideRender: true,
-    writeToDisk: true
-  }))
+  if (isDev) {
+    app.use(webpackDevMiddleware(webpack(clientWebpackConfig), {
+      publicPath: clientWebpackConfig.output.publicPath,
+      serverSideRender: true,
+      writeToDisk: true
+    }))
+  } else {
+    console.log('static -> ', path.join(process.cwd(), appConfig.out, appConfig.staticPath))
+    app.use(express.static(path.join(process.cwd(), appConfig.out, appConfig.staticPath)))
+  }
 
   app.use(appConfig.publicPath, async (req, res) => {
-    const asserts = res.locals.webpackStats.toJson().assetsByChunkName
+    const asserts = isProd ? {} : res.locals.webpackStats.toJson().assetsByChunkName
     const route = serverRouter(req.path)
-    console.log(asserts)
 
     if (!route) {
       res.end('404')
@@ -81,6 +89,22 @@ const startApp = (appConfig: AppConfig) => {
     const content = ctrl.ssr ? renderToString(app.renderView()) : ''
     const __InitialState__: any = ctrl.ssr ? ctrl.store?.getState() : null
 
+    if (isProd) {
+      res.end(`
+        <html>
+          <head>
+              <title>matcha</title>
+          </head>
+          <body>
+            <script>
+              window.__InitialState__ = ${JSON.stringify(__InitialState__)}      
+            </script>
+            <div id="matcha-app-root">${content}</div>
+          </body>
+         </html>
+      `)
+      return
+    }
     res.end(`
       <html>
         <head>
@@ -91,6 +115,8 @@ const startApp = (appConfig: AppConfig) => {
             window.__InitialState__ = ${JSON.stringify(__InitialState__)}      
           </script>
           <div id="matcha-app-root">${content}</div>
+          
+           
            <script src="${clientWebpackConfig.output.publicPath}${asserts.vendor[0]}"></script>
            <script src="${clientWebpackConfig.output.publicPath}${asserts.main[0]}"></script>
         </body>

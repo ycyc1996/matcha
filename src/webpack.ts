@@ -3,22 +3,24 @@ import { AppConfig } from './types'
 import path from 'path'
 import { CleanWebpackPlugin } from 'clean-webpack-plugin'
 
-const NODE_ENV = process.env.NODE_ENV || 'development'
-
 export const createClientWebpackConfig = (appConfig: AppConfig): any => {
+  const isProd = appConfig.mode === 'production'
+  console.log(isProd)
   const webpackConfig = {}
   // const root = path.resolve(appConfig.root, appConfig.src)
   const routes = path.resolve(appConfig.root, appConfig.src)
   const target = 'web'
-  const mode = NODE_ENV
+  const mode = appConfig.mode
   const entry = path.resolve(__dirname, './isomorphic/entry/client')
 
   console.log('entry', entry)
 
+  console.log(path.join(appConfig.root, appConfig.publish, appConfig.out))
+
   const output = {
     libraryTarget: 'window',
     path: path.join(path.join(appConfig.root, appConfig.out), appConfig.staticPath),
-    filename: 'js/main.js',
+    filename: 'js/index.js',
     chunkFilename: 'js/[name].[contenthash].js',
     publicPath: appConfig.staticPath
   }
@@ -90,19 +92,21 @@ export const createClientWebpackConfig = (appConfig: AppConfig): any => {
 }
 
 export const createServerWebpackConfig = (appConfig: AppConfig) => {
+  const isProd = appConfig.mode === 'production'
   const webpackConfig = {}
-  // const root = path.resolve(appConfig.root, appConfig.src)
   const routes = path.resolve(appConfig.root, appConfig.src)
   const target = 'node'
-  const mode = NODE_ENV
+  const mode = appConfig.mode
   const entry = routes
 
   console.log('entry', entry)
 
+  console.log(path.join(appConfig.root, appConfig.publish, appConfig.out))
+
   const output = {
     path: path.join(appConfig.root, appConfig.out),
     libraryTarget: 'commonjs2',
-    filename: 'main.js',
+    filename: 'index.js',
     chunkFilename: '[name].[contenthash].js'
   }
   const rules = [
@@ -144,7 +148,7 @@ export const createServerWebpackConfig = (appConfig: AppConfig) => {
 
   const devtool = 'source-map'
 
-  const watch = true
+  const watch = !isProd
 
   const optimization = {
     // Automatically split vendor and commons

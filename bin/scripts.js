@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 const path = require('path')
-const { start } = require('../dist/src').default
+const { start, build } = require('../dist/src').default
 
 const cwd = process.cwd()
 
@@ -33,4 +33,7 @@ function commandStart (args) {
 
 function commandBuild (args) {
   console.info('build matcha app')
+  process.env.NODE_ENV = 'production'
+  const config = require(path.resolve(cwd, 'matcha.config'))
+  build(config)
 }

@@ -1,7 +1,7 @@
 module.exports = {
   port: 3004,
   env: 'fat',
-  mode: 'development',
+  mode: 'production',
   root: __dirname,
   src: './src',
   out: './out',
