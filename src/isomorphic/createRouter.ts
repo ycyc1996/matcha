@@ -5,7 +5,7 @@ const createRouter = (routes: Route[]) => {
   return (path: string) => {
     return routes.find(route => {
       console.log(route.patterns, path)
-      return route.patterns.some(parttern => parttern.endsWith(path))
+      return route.patterns.some(parttern => path.endsWith(parttern))
     }) || null
   }
 }

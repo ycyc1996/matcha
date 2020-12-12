@@ -71,6 +71,8 @@ const startApp = (appConfig: AppConfig) => {
     const asserts = isProd ? {} : res.locals.webpackStats.toJson().assetsByChunkName
     const route = serverRouter(req.path)
 
+    console.log(asserts)
+
     if (!route) {
       res.end('404')
       return
@@ -89,6 +91,7 @@ const startApp = (appConfig: AppConfig) => {
     const content = ctrl.ssr ? renderToString(app.renderView()) : ''
     const __InitialState__: any = ctrl.ssr ? ctrl.store?.getState() : null
 
+    console.log(isProd)
     if (isProd) {
       res.end(`
         <html>
@@ -115,8 +118,6 @@ const startApp = (appConfig: AppConfig) => {
             window.__InitialState__ = ${JSON.stringify(__InitialState__)}      
           </script>
           <div id="matcha-app-root">${content}</div>
-          
-           
            <script src="${clientWebpackConfig.output.publicPath}${asserts.vendor[0]}"></script>
            <script src="${clientWebpackConfig.output.publicPath}${asserts.main[0]}"></script>
         </body>
