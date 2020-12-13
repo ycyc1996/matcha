@@ -1,11 +1,11 @@
-import { ModelAction, Store, Controller } from '../types'
+import { ModelAction, Store, Controller, RequestContext } from '../types'
 import React from 'react'
 
 export default abstract class AppController<ModelState> implements Controller<ModelState> {
   ssr: boolean = false
   pageId: number = 0
   store: Store<ModelState> | null = null
-
+  context: RequestContext
   abstract View: React.FC<any>
   abstract Model: {
     initialState: ModelState;
@@ -14,9 +14,9 @@ export default abstract class AppController<ModelState> implements Controller<Mo
     }
   }
 
-  constructor (context) {
+  constructor (context: RequestContext) {
     console.log('constructor')
-    console.log(context)
+    this.context = context
   }
 
   abstract beforeRender: () => Promise<void>

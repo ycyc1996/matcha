@@ -24,6 +24,7 @@ export interface ControllerFactory<ModelState> {
 export interface Controller<ModelState> {
   ssr: boolean;
   pageId: number;
+  context: RequestContext;
   View: React.FC<any>;
 
   Model: {
