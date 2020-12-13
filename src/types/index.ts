@@ -41,6 +41,21 @@ export interface Controller<ModelState> {
   [key: string]: any;
 }
 
+export interface RequestContext {
+  isServer: boolean;
+  isClient: boolean;
+  location: {
+    protocol: string;
+    hostname: string;
+    baseUrl: string;
+    path: string;
+    query: object;
+  },
+  prefetch: {
+    state: object;
+  };
+}
+
 export interface Store<ModelState> {
   getState: () => ModelState;
   getDispatchers: (...args: any[]) => void;

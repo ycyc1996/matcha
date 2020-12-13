@@ -10,14 +10,12 @@ export default class extends AppController {
   View = View
   Model = { initialState, actions }
 
-  afterRender = async () => {
-    setTimeout(() => {
-      this.store.getDispatchers().UPDATE_MESSAGES([
-        'hello world!' + '  —— ' + new Date(),
-        'hi yichenyang!' + '  —— ' + new Date(),
-        'yo matcha!' + '  —— ' + new Date()
-      ])
-    }, 1000)
+  beforeRender = async () => {
+    this.store.getDispatchers().UPDATE_MESSAGES([
+      'hello world!' + ' ----- 发布时间 ' + new Date(),
+      'hi yichenyang!' + ' ----- 发布时间 ' + new Date(),
+      'yo matcha!' + ' ----- 发布时间 ' + new Date()
+    ])
   }
 
 

@@ -1,19 +1,17 @@
 import React, { useEffect, useState } from 'react'
-import { Controller, ControllerFactory } from '../types'
+import { Controller, ControllerFactory, RequestContext } from '../types'
 import createStore from './createStore'
 
-const createApp = async (AppCtrlClass: ControllerFactory<any>, {
-  isServer, initialState, isClient, location
-}) => {
+const createApp = async (AppCtrlClass: ControllerFactory<any>, context: RequestContext) => {
+  const { isServer, prefetch, isClient } = context
   const ctrl: Controller<any> = new AppCtrlClass({})
 
   const { View, Model } = ctrl
 
-  ctrl.store = createStore({
-    ...Model.initialState,
-    ...(ctrl.ssr ? { ...initialState } : {})
-  }, Model.actions)
+  const state = isClient && ctrl.ssr ? { ...prefetch.state } : { ...Model.initialState }
+  ctrl.store = createStore(state, Model.actions)
 
+  console.log(ctrl.store.getState())
   const AppView: React.FC<any> = () => {
     if (!ctrl.store) {
       return null
@@ -48,6 +46,10 @@ const createApp = async (AppCtrlClass: ControllerFactory<any>, {
   if ((isServer && ctrl.ssr) || (!isServer && !ctrl.ssr)) {
     await ctrl.beforeRender?.()
   }
+
+  // if (isServer) {
+  //   context.prefetch.state = ctrl.store.getState()
+  // }
 
   return {
     renderView: () => <AppView/>,

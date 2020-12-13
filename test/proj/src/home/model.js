@@ -4,7 +4,7 @@ export const initialState = {
     name: '',
     age: '',
   },
-  messages: []
+  messages: [],
 }
 
 export const actions = {

@@ -10,7 +10,7 @@ const View = ({ state, dispatchers, ctrl }) => {
 
   return (
     <div id="app-root">
-      <h1>my home</h1>
+      <h1>我的主页</h1>
       <h2>count: { state.count }</h2>
       <div onClick={() => {
         console.log('click')

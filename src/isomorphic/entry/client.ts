@@ -12,22 +12,24 @@ const getModuleAsync = async loader => {
 
 const start = async () => {
   const clientRouter = createRouter(routes)
-  const pathname = window.location.pathname
-  const route = clientRouter(pathname)
+  // @ts-ignore
+  const prefetch = JSON.parse(decodeURIComponent(window.__PREFETCH__ || '{}'))
+  // @ts-ignore
+  const location = JSON.parse(decodeURIComponent(window.__LOCATION__ || '{}'))
+
+  console.log(prefetch, location)
+  const route = clientRouter(location?.path)
 
   console.log(route)
   if (route) {
     console.log(route)
     const AppCtrlClass = await getModuleAsync(route.loader)
 
-    // @ts-ignore
-    const initialState = window.__InitialState__ || null
-
     const app = await createApp(AppCtrlClass, {
       isServer: false,
       isClient: true,
       location: { ...location },
-      initialState
+      prefetch: { ...prefetch }
     })
 
     console.log(app.getCtrl())

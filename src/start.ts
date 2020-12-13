@@ -1,6 +1,6 @@
 import express, { Express } from 'express'
 import path from 'path'
-import { AppConfig, ControllerFactory } from './types'
+import { AppConfig, ControllerFactory, RequestContext } from './types'
 import webpack from 'webpack'
 import webpackDevMiddleware from 'webpack-dev-middleware'
 import { createServerWebpackConfig, createClientWebpackConfig } from './webpack'
@@ -80,43 +80,60 @@ const startApp = (appConfig: AppConfig) => {
 
     const AppCtrlClass = await getModuleAsync(route.loader)
 
-    const app = await createApp(AppCtrlClass as ControllerFactory<any>, {
+    const context: RequestContext = {
       isServer: true,
       isClient: false,
-      location: {},
-      initialState: {}
-    })
+      location: {
+        protocol: req.protocol,
+        hostname: req.hostname,
+        baseUrl: req.baseUrl,
+        path: req.path,
+        query: req.query
+      },
+      prefetch: { state: {} }
+    }
+
+    console.log(context)
+
+    const app = await createApp(AppCtrlClass as ControllerFactory<any>, context)
 
     const ctrl = app.getCtrl()
+    context.prefetch.state = ctrl.store?.getState() || {}
     const content = ctrl.ssr ? renderToString(app.renderView()) : ''
-    const __InitialState__: any = ctrl.ssr ? ctrl.store?.getState() : null
 
     console.log(isProd)
+    res.writeHead(200, { 'Content-Type': 'text/html;charset=utf-8' })
     if (isProd) {
       res.end(`
         <html>
           <head>
               <title>matcha</title>
           </head>
+          <script>
+              window.__LOCATION__ = '${encodeURIComponent(JSON.stringify(context.location))}'
+              window.__PREFETCH__ = '${encodeURIComponent(JSON.stringify(context.prefetch))}'       
+              window.__XSS__ = '${encodeURIComponent('alert(123)')}'
+          </script
           <body>
-            <script>
-              window.__InitialState__ = ${JSON.stringify(__InitialState__)}      
-            </script>
             <div id="matcha-app-root">${content}</div>
           </body>
          </html>
       `)
       return
     }
+
+    console.log(content)
     res.end(`
       <html>
         <head>
             <title>matcha</title>
         </head>
-        <body>
-          <script>
-            window.__InitialState__ = ${JSON.stringify(__InitialState__)}      
+         <script>
+            window.__LOCATION__ = '${encodeURIComponent(JSON.stringify(context.location))}'
+            window.__PREFETCH__ = '${encodeURIComponent(JSON.stringify(context.prefetch))}'       
+            window.__XSS__ = '${encodeURIComponent('alert(123)')}'
           </script>
+        <body>
           <div id="matcha-app-root">${content}</div>
            <script src="${clientWebpackConfig.output.publicPath}${asserts.vendor[0]}"></script>
            <script src="${clientWebpackConfig.output.publicPath}${asserts.main[0]}"></script>
