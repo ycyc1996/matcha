@@ -5,21 +5,17 @@ import { CleanWebpackPlugin } from 'clean-webpack-plugin'
 
 export const createClientWebpackConfig = (appConfig: AppConfig): any => {
   const isProd = appConfig.mode === 'production'
-  console.log(isProd)
   const webpackConfig = {}
   // const root = path.resolve(appConfig.root, appConfig.src)
+  const outRoot = isProd ? path.join(appConfig.root, appConfig.publish) : appConfig.root
   const routes = path.resolve(appConfig.root, appConfig.src)
   const target = 'web'
   const mode = appConfig.mode
   const entry = path.resolve(__dirname, './isomorphic/entry/client')
 
-  console.log('entry', entry)
-
-  console.log(path.join(appConfig.root, appConfig.publish, appConfig.out))
-
   const output = {
     libraryTarget: 'window',
-    path: path.join(path.join(appConfig.root, appConfig.out), appConfig.staticPath),
+    path: path.join(outRoot, appConfig.out, appConfig.staticPath),
     filename: 'js/index.js',
     chunkFilename: 'js/[name].[contenthash].js',
     publicPath: appConfig.staticPath
@@ -98,13 +94,9 @@ export const createServerWebpackConfig = (appConfig: AppConfig) => {
   const target = 'node'
   const mode = appConfig.mode
   const entry = routes
-
-  console.log('entry', entry)
-
-  console.log(path.join(appConfig.root, appConfig.publish, appConfig.out))
-
+  const outRoot = isProd ? path.join(appConfig.root, appConfig.publish) : appConfig.root
   const output = {
-    path: path.join(appConfig.root, appConfig.out),
+    path: path.join(outRoot, appConfig.out),
     libraryTarget: 'commonjs2',
     filename: 'index.js',
     chunkFilename: '[name].[contenthash].js'
