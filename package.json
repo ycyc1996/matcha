@@ -9,8 +9,7 @@
     "build": "tsc",
     "lint": "eslint --ext .ts,.js .",
     "lint:fix": "eslint --fix --ext .ts,tsx,.js,jsx .",
-    "proj:dev": "cd ./test/proj && matcha start dev",
-    "proj:prod": "cd ./test/proj && matcha start prod"
+    "example": "cd example && matcha start"
   },
   "bin": "./bin/scripts.js",
   "author": "answer",

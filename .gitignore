@@ -2,8 +2,8 @@
 node_modules
 /dist
 
-/test/proj/out
-/test/proj/publish
+/example/out
+/example/publish
 
 comp-entry.js
 package-lock.json
