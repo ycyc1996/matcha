@@ -37,8 +37,7 @@ const startApp = (appConfig: AppConfig) => {
   `)
   })
 
-  console.log(path.resolve(process.cwd(), appConfig.out))
-  let serverRouter = isDev ? createRouter([]) : createRouter(require(path.join(process.cwd(), appConfig.out)).default)
+  let serverRouter = isDev ? createRouter([]) : createRouter(require(path.join(appConfig.root, appConfig.out)).default)
 
   if (isDev) {
     webpack(createServerWebpackConfig(appConfig), async (err, stats: webpack.Stats) => {
@@ -63,8 +62,8 @@ const startApp = (appConfig: AppConfig) => {
       writeToDisk: true
     }))
   } else {
-    console.log('static -> ', path.join(process.cwd(), appConfig.out, appConfig.staticPath))
-    app.use(express.static(path.join(process.cwd(), appConfig.out, appConfig.staticPath)))
+    console.log('static -> ', path.join(appConfig.root, appConfig.out, appConfig.staticPath))
+    app.use(express.static(path.join(appConfig.root, appConfig.out, appConfig.staticPath)))
   }
 
   app.use(appConfig.publicPath, async (req, res) => {

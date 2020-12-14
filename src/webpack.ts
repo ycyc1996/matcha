@@ -2,12 +2,12 @@
 import { AppConfig } from './types'
 import path from 'path'
 import { CleanWebpackPlugin } from 'clean-webpack-plugin'
+import { WebpackManifestPlugin } from 'webpack-manifest-plugin'
 
 export const createClientWebpackConfig = (appConfig: AppConfig): any => {
   const isProd = appConfig.mode === 'production'
   const webpackConfig = {}
-  // const root = path.resolve(appConfig.root, appConfig.src)
-  const outRoot = isProd ? path.join(appConfig.root, appConfig.publish) : appConfig.root
+  console.log(isProd)
   const routes = path.resolve(appConfig.root, appConfig.src)
   const target = 'web'
   const mode = appConfig.mode
@@ -15,7 +15,7 @@ export const createClientWebpackConfig = (appConfig: AppConfig): any => {
 
   const output = {
     libraryTarget: 'window',
-    path: path.join(outRoot, appConfig.out, appConfig.staticPath),
+    path: path.join(appConfig.root, appConfig.out, appConfig.staticPath),
     filename: 'js/index.js',
     chunkFilename: 'js/[name].[contenthash].js',
     publicPath: appConfig.staticPath
@@ -53,7 +53,8 @@ export const createClientWebpackConfig = (appConfig: AppConfig): any => {
   const module = { rules }
 
   const plugins = [
-    new CleanWebpackPlugin()
+    new CleanWebpackPlugin(),
+    new WebpackManifestPlugin()
   ]
 
   const devtool = 'source-map'
@@ -89,14 +90,14 @@ export const createClientWebpackConfig = (appConfig: AppConfig): any => {
 
 export const createServerWebpackConfig = (appConfig: AppConfig) => {
   const isProd = appConfig.mode === 'production'
+  console.log(isProd)
   const webpackConfig = {}
   const routes = path.resolve(appConfig.root, appConfig.src)
   const target = 'node'
   const mode = appConfig.mode
   const entry = routes
-  const outRoot = isProd ? path.join(appConfig.root, appConfig.publish) : appConfig.root
   const output = {
-    path: path.join(outRoot, appConfig.out),
+    path: path.join(appConfig.root, appConfig.out),
     libraryTarget: 'commonjs2',
     filename: 'index.js',
     chunkFilename: '[name].[contenthash].js'
@@ -131,7 +132,8 @@ export const createServerWebpackConfig = (appConfig: AppConfig) => {
   const module = { rules }
 
   const plugins = [
-    new CleanWebpackPlugin()
+    new CleanWebpackPlugin(),
+    new WebpackManifestPlugin({ useEntryKeys: true })
   ]
 
   const devServer = {
