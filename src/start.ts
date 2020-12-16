@@ -62,15 +62,12 @@ const startApp = (appConfig: AppConfig) => {
       writeToDisk: true
     }))
   } else {
-    console.log('static -> ', path.join(appConfig.root, appConfig.out, appConfig.staticPath))
     app.use(express.static(path.join(appConfig.root, appConfig.out, appConfig.staticPath)))
   }
 
   app.use(appConfig.publicPath, async (req, res) => {
     const asserts = isProd ? {} : res.locals.webpackStats.toJson().assetsByChunkName
     const route = serverRouter(req.path)
-
-    console.log(asserts)
 
     if (!route) {
       res.end('404')
@@ -89,10 +86,9 @@ const startApp = (appConfig: AppConfig) => {
         path: req.path,
         query: req.query
       },
-      prefetch: { state: {} }
+      prefetch: { state: {} },
+      req
     }
-
-    console.log(context)
 
     const app = await createApp(AppCtrlClass as ControllerFactory<any>, context)
 
@@ -100,7 +96,6 @@ const startApp = (appConfig: AppConfig) => {
     context.prefetch.state = ctrl.store?.getState() || {}
     const content = ctrl.ssr ? renderToString(app.renderView()) : ''
 
-    console.log(isProd)
     res.writeHead(200, { 'Content-Type': 'text/html;charset=utf-8' })
     if (isProd) {
       res.end(`
@@ -121,7 +116,6 @@ const startApp = (appConfig: AppConfig) => {
       return
     }
 
-    console.log(content)
     res.end(`
       <html>
         <head>

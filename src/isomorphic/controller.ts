@@ -15,7 +15,6 @@ export default abstract class AppController<ModelState> implements Controller<Mo
   }
 
   constructor (context: RequestContext) {
-    console.log('constructor')
     this.context = context
   }
 

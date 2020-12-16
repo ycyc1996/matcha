@@ -8,9 +8,12 @@ const View = ({ state, dispatchers, ctrl }) => {
 
   const onAgeChange = (e) => dispatchers.UPDATE_FORM_DATA({ age: e.target.value })
 
+
+  const ua = ctrl?.util?.getUserAgent(ctrl?.context)
   return (
     <div id="app-root">
       <h1>我的主页</h1>
+      <h1>{ua}</h1>
       <h2>count: { state.count }</h2>
       <div onClick={() => {
         console.log('click')

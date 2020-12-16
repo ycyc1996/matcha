@@ -51,10 +51,11 @@ export interface RequestContext {
     baseUrl: string;
     path: string;
     query: object;
-  },
+  };
   prefetch: {
     state: object;
   };
+  req?: any;
 }
 
 export interface Store<ModelState> {

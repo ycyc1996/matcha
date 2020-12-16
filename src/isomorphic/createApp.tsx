@@ -4,14 +4,13 @@ import createStore from './createStore'
 
 const createApp = async (AppCtrlClass: ControllerFactory<any>, context: RequestContext) => {
   const { isServer, prefetch, isClient } = context
-  const ctrl: Controller<any> = new AppCtrlClass({})
+  const ctrl: Controller<any> = new AppCtrlClass(context)
 
   const { View, Model } = ctrl
 
   const state = isClient && ctrl.ssr ? { ...prefetch.state } : { ...Model.initialState }
   ctrl.store = createStore(state, Model.actions)
 
-  console.log(ctrl.store.getState())
   const AppView: React.FC<any> = () => {
     if (!ctrl.store) {
       return null

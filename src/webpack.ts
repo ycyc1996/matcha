@@ -11,7 +11,7 @@ export const createClientWebpackConfig = (appConfig: AppConfig): any => {
   const routes = path.resolve(appConfig.root, appConfig.src)
   const target = 'web'
   const mode = appConfig.mode
-  const entry = path.resolve(__dirname, './isomorphic/entry/client')
+  const entry = path.resolve(__dirname, './client/start.js')
 
   const output = {
     libraryTarget: 'window',
