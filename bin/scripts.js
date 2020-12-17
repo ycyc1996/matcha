@@ -2,38 +2,32 @@
 const path = require('path')
 const { start, build } = require('../dist/src').default
 
+const yargs = require('yargs/yargs')
+const { hideBin } = require('yargs/helpers')
+const argv = yargs(hideBin(process.argv)).argv
+
 const cwd = process.cwd()
+const operator = argv._[0]
 
-const args = process.argv.slice(2)
+const { mode } = argv
 
-console.log(args)
+switch (operator) {
+  case 'start':
+    start(getMatchaConfig({ cwd, mode }))
+    break
+  case 'build':
+    build(getMatchaConfig({ cwd, mode }))
+    break
+  default:
+    console.log('err')
+    break
+}
 
-if (args.length > 0) {
-  const action = args[0]
-
-  switch (action) {
-    case 'start':
-      commandStart(args)
-      break
-    case 'build':
-      commandBuild(args)
-      break
-    case 'help':
-      break
-    default:
-      break
+function getMatchaConfig ({ cwd, mode }) {
+  const config = require(path.resolve(cwd, 'matcha.config'))
+  if (mode) {
+    Object.assign(config, { mode })
   }
-}
-
-function commandStart (args) {
-  console.info('start matcha app')
-  const config = require(path.resolve(cwd, 'matcha.config'))
-  start(config)
-}
-
-function commandBuild (args) {
-  console.info('build matcha app')
-  process.env.NODE_ENV = 'production'
-  const config = require(path.resolve(cwd, 'matcha.config'))
-  build(config)
+  console.log(config)
+  return config
 }
