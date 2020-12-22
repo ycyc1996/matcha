@@ -13,7 +13,7 @@ const getModuleAsync = async loader => {
 }
 
 const startApp = (appConfig: AppConfig) => {
-  const { port, mode, root, src, publicPath, staticPath, out, publish } = appConfig
+  const { port, mode, root, src, publicPath, staticPath, out } = appConfig
 
   const isProd = mode === 'production'
   const isDev = mode === 'development'
@@ -29,7 +29,6 @@ const startApp = (appConfig: AppConfig) => {
          -- root: ${root}
          -- src: ${src}
          -- out: ${out}
-         -- publish: ${publish}
     app:
          -- publicPath: ${publicPath}
          -- staticPath: ${staticPath}
