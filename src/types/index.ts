@@ -5,9 +5,21 @@ export interface AppConfig {
   env: string;
   mode: 'development' | 'production';
   root: string;
+  publish: string;
   src: string;
   out: string;
+  staticPath: string;
+  publicPath: string;
+}
+
+export interface MatchaConfig {
+  port: number;
+  env: string;
+  mode: string;
+  root: string;
   publish: string;
+  src: string;
+  out: string;
   staticPath: string;
   publicPath: string;
 }

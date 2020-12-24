@@ -20,7 +20,7 @@ export default class extends AppController {
 
   beforeRender = async () => {
     this.store.getDispatchers().UPDATE_MESSAGES([
-      'hello world!' + ' ----- 发布时间 ' + new Date(),
+      'hello world!!' + ' ----- 发布时间 ' + new Date(),
       'hi yichenyang!' + ' ----- 发布时间 ' + new Date(),
       'yo matcha!' + ' ----- 发布时间 ' + new Date()
     ])

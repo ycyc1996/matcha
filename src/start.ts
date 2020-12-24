@@ -16,6 +16,7 @@ const startApp = (appConfig: AppConfig) => {
   const { port, mode, root, src, publicPath, staticPath, out } = appConfig
 
   const isProd = mode === 'production'
+
   const isDev = mode === 'development'
 
   const app: Express = express()
@@ -29,6 +30,7 @@ const startApp = (appConfig: AppConfig) => {
          -- root: ${root}
          -- src: ${src}
          -- out: ${out}
+         -- isProd: ${isProd}
     app:
          -- publicPath: ${publicPath}
          -- staticPath: ${staticPath}
@@ -39,7 +41,7 @@ const startApp = (appConfig: AppConfig) => {
   let serverRouter = isDev ? createRouter([]) : createRouter(require(path.join(appConfig.root, appConfig.out)).default)
 
   if (isDev) {
-    webpack(createServerWebpackConfig(appConfig), async (err, stats: webpack.Stats) => {
+    webpack(createServerWebpackConfig(appConfig, true), async (err, stats: webpack.Stats) => {
       console.log(err)
       console.log(stats.toString({ colors: true }))
       const { outputPath } = stats.toJson()
@@ -52,20 +54,22 @@ const startApp = (appConfig: AppConfig) => {
     })
   }
 
-  const clientWebpackConfig = createClientWebpackConfig(appConfig)
-
   if (isDev) {
+    const clientWebpackConfig = createClientWebpackConfig(appConfig, true)
     app.use(webpackDevMiddleware(webpack(clientWebpackConfig), {
       publicPath: clientWebpackConfig.output.publicPath,
       serverSideRender: true,
       writeToDisk: true
     }))
   } else {
-    app.use(express.static(path.join(appConfig.root, appConfig.out, appConfig.staticPath)))
+    app.use(staticPath, express.static(path.join(appConfig.root, appConfig.out, appConfig.staticPath)))
   }
 
   app.use(appConfig.publicPath, async (req, res) => {
-    const asserts = isProd ? {} : res.locals.webpackStats.toJson().assetsByChunkName
+    const asserts = isProd
+      ? require(path.join(appConfig.root, appConfig.out, appConfig.staticPath, 'manifest.json'))
+      : res.locals.webpackStats.toJson().assetsByChunkName
+
     const route = serverRouter(req.path)
 
     if (!route) {
@@ -94,27 +98,9 @@ const startApp = (appConfig: AppConfig) => {
     const ctrl = app.getCtrl()
     context.prefetch.state = ctrl.store?.getState() || {}
     const content = ctrl.ssr ? renderToString(app.renderView()) : ''
-
+    const main = isProd ? asserts.main : asserts.main[0]
+    const vendor = isProd ? asserts.vendor : asserts.vendor[0]
     res.writeHead(200, { 'Content-Type': 'text/html;charset=utf-8' })
-    if (isProd) {
-      res.end(`
-        <html>
-          <head>
-              <title>matcha</title>
-          </head>
-          <script>
-              window.__LOCATION__ = '${encodeURIComponent(JSON.stringify(context.location))}'
-              window.__PREFETCH__ = '${encodeURIComponent(JSON.stringify(context.prefetch))}'       
-              window.__XSS__ = '${encodeURIComponent('alert(123)')}'
-          </script
-          <body>
-            <div id="matcha-app-root">${content}</div>
-          </body>
-         </html>
-      `)
-      return
-    }
-
     res.end(`
       <html>
         <head>
@@ -127,8 +113,8 @@ const startApp = (appConfig: AppConfig) => {
           </script>
         <body>
           <div id="matcha-app-root">${content}</div>
-           <script src="${clientWebpackConfig.output.publicPath}${asserts.vendor[0]}"></script>
-           <script src="${clientWebpackConfig.output.publicPath}${asserts.main[0]}"></script>
+           <script src="${staticPath}${main}"></script>
+           <script src="${staticPath}${vendor}"></script>
         </body>
        </html>
       `)

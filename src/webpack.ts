@@ -4,10 +4,8 @@ import path from 'path'
 import { CleanWebpackPlugin } from 'clean-webpack-plugin'
 import { WebpackManifestPlugin } from 'webpack-manifest-plugin'
 
-export const createClientWebpackConfig = (appConfig: AppConfig): any => {
-  const isProd = appConfig.mode === 'production'
+export const createClientWebpackConfig = (appConfig: AppConfig, watch: boolean = false): any => {
   const webpackConfig = {}
-  console.log(isProd)
   const routes = path.resolve(appConfig.root, appConfig.src)
   const target = 'web'
   const mode = appConfig.mode
@@ -20,8 +18,6 @@ export const createClientWebpackConfig = (appConfig: AppConfig): any => {
     chunkFilename: 'js/[name].[contenthash].js',
     publicPath: appConfig.staticPath
   }
-
-  console.log(output.path)
 
   const rules = [
     { parser: { requireEnsure: false } },
@@ -54,7 +50,7 @@ export const createClientWebpackConfig = (appConfig: AppConfig): any => {
 
   const plugins = [
     new CleanWebpackPlugin(),
-    new WebpackManifestPlugin()
+    new WebpackManifestPlugin({ useEntryKeys: true, publicPath: '' })
   ]
 
   const devtool = 'source-map'
@@ -83,14 +79,13 @@ export const createClientWebpackConfig = (appConfig: AppConfig): any => {
     plugins,
     devServer,
     optimization,
-    devtool
+    devtool,
+    watch
   })
   return webpackConfig
 }
 
-export const createServerWebpackConfig = (appConfig: AppConfig) => {
-  const isProd = appConfig.mode === 'production'
-  console.log(isProd)
+export const createServerWebpackConfig = (appConfig: AppConfig, watch: boolean = false) => {
   const webpackConfig = {}
   const routes = path.resolve(appConfig.root, appConfig.src)
   const target = 'node'
@@ -133,7 +128,7 @@ export const createServerWebpackConfig = (appConfig: AppConfig) => {
 
   const plugins = [
     new CleanWebpackPlugin(),
-    new WebpackManifestPlugin({ useEntryKeys: true })
+    new WebpackManifestPlugin({ useEntryKeys: true, publicPath: '' })
   ]
 
   const devServer = {
@@ -141,8 +136,6 @@ export const createServerWebpackConfig = (appConfig: AppConfig) => {
   }
 
   const devtool = 'source-map'
-
-  const watch = !isProd
 
   const optimization = {
     // Automatically split vendor and commons
@@ -164,8 +157,8 @@ export const createServerWebpackConfig = (appConfig: AppConfig) => {
     plugins,
     devServer,
     optimization,
-    watch,
-    devtool
+    devtool,
+    watch
   })
   return webpackConfig
 }

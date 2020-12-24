@@ -4,9 +4,10 @@ import { createServerWebpackConfig, createClientWebpackConfig } from './webpack'
 import path from 'path'
 
 const buildApp = async (appConfig: AppConfig) => {
+  const isDev = appConfig.mode === 'development'
   const buildAppConfig = {
     ...appConfig,
-    out: path.join(appConfig.publish, appConfig.out)
+    out: isDev ? appConfig.out : path.join(appConfig.publish, appConfig.out)
   }
   webpack(createClientWebpackConfig(buildAppConfig), async (err, stats: webpack.Stats) => {
     console.log(err)
