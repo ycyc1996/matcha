@@ -1,6 +1,6 @@
 import React from 'react'
 
-export interface AppConfig {
+export interface MatchaConfig {
   port: number;
   env: string;
   mode: 'development' | 'production';
@@ -12,17 +12,17 @@ export interface AppConfig {
   publicPath: string;
 }
 
-export interface MatchaConfig {
-  port: number;
-  env: string;
-  mode: string;
-  root: string;
-  publish: string;
-  src: string;
-  out: string;
-  staticPath: string;
-  publicPath: string;
-}
+// export interface MatchaConfig {
+//   port: number;
+//   env: string;
+//   mode: string;
+//   root: string;
+//   publish: string;
+//   src: string;
+//   out: string;
+//   staticPath: string;
+//   publicPath: string;
+// }
 
 export interface Route {
   patterns: string[];

@@ -1,22 +1,22 @@
 
-import { AppConfig } from './types'
+import { MatchaConfig } from './types'
 import path from 'path'
 import { CleanWebpackPlugin } from 'clean-webpack-plugin'
 import { WebpackManifestPlugin } from 'webpack-manifest-plugin'
 
-export const createClientWebpackConfig = (appConfig: AppConfig, watch: boolean = false): any => {
+export const createClientWebpackConfig = (matchaConfig: MatchaConfig, watch: boolean = false): any => {
   const webpackConfig = {}
-  const routes = path.resolve(appConfig.root, appConfig.src)
+  const routes = path.resolve(matchaConfig.root, matchaConfig.src)
   const target = 'web'
-  const mode = appConfig.mode
+  const mode = matchaConfig.mode
   const entry = path.resolve(__dirname, './client/start.js')
 
   const output = {
     libraryTarget: 'window',
-    path: path.join(appConfig.root, appConfig.out, appConfig.staticPath),
+    path: path.join(matchaConfig.root, matchaConfig.out, matchaConfig.staticPath),
     filename: 'js/index.js',
     chunkFilename: 'js/[name].[contenthash].js',
-    publicPath: appConfig.staticPath
+    publicPath: matchaConfig.staticPath
   }
 
   const rules = [
@@ -85,14 +85,14 @@ export const createClientWebpackConfig = (appConfig: AppConfig, watch: boolean =
   return webpackConfig
 }
 
-export const createServerWebpackConfig = (appConfig: AppConfig, watch: boolean = false) => {
+export const createServerWebpackConfig = (matchaConfig: MatchaConfig, watch: boolean = false) => {
   const webpackConfig = {}
-  const routes = path.resolve(appConfig.root, appConfig.src)
+  const routes = path.resolve(matchaConfig.root, matchaConfig.src)
   const target = 'node'
-  const mode = appConfig.mode
+  const mode = matchaConfig.mode
   const entry = routes
   const output = {
-    path: path.join(appConfig.root, appConfig.out),
+    path: path.join(matchaConfig.root, matchaConfig.out),
     libraryTarget: 'commonjs2',
     filename: 'index.js',
     chunkFilename: '[name].[contenthash].js'

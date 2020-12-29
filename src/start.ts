@@ -1,6 +1,6 @@
 import express, { Express } from 'express'
 import path from 'path'
-import { AppConfig, ControllerFactory, RequestContext } from './types'
+import { MatchaConfig, ControllerFactory, RequestContext } from './types'
 import webpack from 'webpack'
 import webpackDevMiddleware from 'webpack-dev-middleware'
 import { createServerWebpackConfig, createClientWebpackConfig } from './webpack'
@@ -12,8 +12,8 @@ const getModuleAsync = async loader => {
   return (await loader()).default
 }
 
-const startApp = (appConfig: AppConfig) => {
-  const { port, mode, root, src, publicPath, staticPath, out } = appConfig
+const startApp = (matchaConfig: MatchaConfig) => {
+  const { port, mode, root, src, publicPath, staticPath, out } = matchaConfig
 
   const isProd = mode === 'production'
 
@@ -38,10 +38,10 @@ const startApp = (appConfig: AppConfig) => {
   `)
   })
 
-  let serverRouter = isDev ? createRouter([]) : createRouter(require(path.join(appConfig.root, appConfig.out)).default)
+  let serverRouter = isDev ? createRouter([]) : createRouter(require(path.join(root, out)).default)
 
   if (isDev) {
-    webpack(createServerWebpackConfig(appConfig, true), async (err, stats: webpack.Stats) => {
+    webpack(createServerWebpackConfig(matchaConfig, true), async (err, stats: webpack.Stats) => {
       console.log(err)
       console.log(stats.toString({ colors: true }))
       const { outputPath } = stats.toJson()
@@ -55,19 +55,19 @@ const startApp = (appConfig: AppConfig) => {
   }
 
   if (isDev) {
-    const clientWebpackConfig = createClientWebpackConfig(appConfig, true)
+    const clientWebpackConfig = createClientWebpackConfig(matchaConfig, true)
     app.use(webpackDevMiddleware(webpack(clientWebpackConfig), {
       publicPath: clientWebpackConfig.output.publicPath,
       serverSideRender: true,
       writeToDisk: true
     }))
   } else {
-    app.use(staticPath, express.static(path.join(appConfig.root, appConfig.out, appConfig.staticPath)))
+    app.use(staticPath, express.static(path.join(root, out, staticPath)))
   }
 
-  app.use(appConfig.publicPath, async (req, res) => {
+  app.use(publicPath, async (req, res) => {
     const asserts = isProd
-      ? require(path.join(appConfig.root, appConfig.out, appConfig.staticPath, 'manifest.json'))
+      ? require(path.join(root, out, staticPath, 'manifest.json'))
       : res.locals.webpackStats.toJson().assetsByChunkName
 
     const route = serverRouter(req.path)

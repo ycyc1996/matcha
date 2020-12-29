@@ -1,13 +1,13 @@
-import { AppConfig } from './types'
+import { MatchaConfig } from './types'
 import webpack from 'webpack'
 import { createServerWebpackConfig, createClientWebpackConfig } from './webpack'
 import path from 'path'
 
-const buildApp = async (appConfig: AppConfig) => {
-  const isDev = appConfig.mode === 'development'
+const buildApp = async (matchaConfig: MatchaConfig) => {
+  const isDev = matchaConfig.mode === 'development'
   const buildAppConfig = {
-    ...appConfig,
-    out: isDev ? appConfig.out : path.join(appConfig.publish, appConfig.out)
+    ...matchaConfig,
+    out: isDev ? matchaConfig.out : path.join(matchaConfig.publish, matchaConfig.out)
   }
   webpack(createClientWebpackConfig(buildAppConfig), async (err, stats: webpack.Stats) => {
     console.log(err)
