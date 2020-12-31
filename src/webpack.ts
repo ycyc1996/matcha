@@ -4,7 +4,7 @@ import path from 'path'
 import { CleanWebpackPlugin } from 'clean-webpack-plugin'
 import { WebpackManifestPlugin } from 'webpack-manifest-plugin'
 
-export const createClientWebpackConfig = (matchaConfig: MatchaConfig, watch: boolean = false): any => {
+export const createClientWebpackConfig = (matchaConfig: MatchaConfig, isDevServer = false): any => {
   const webpackConfig = {}
   const routes = path.resolve(matchaConfig.root, matchaConfig.src)
   const target = 'web'
@@ -80,19 +80,19 @@ export const createClientWebpackConfig = (matchaConfig: MatchaConfig, watch: boo
     devServer,
     optimization,
     devtool,
-    watch
+    watch: !!isDevServer
   })
   return webpackConfig
 }
 
-export const createServerWebpackConfig = (matchaConfig: MatchaConfig, watch: boolean = false) => {
+export const createServerWebpackConfig = (matchaConfig: MatchaConfig, isDevServer: boolean = false) => {
   const webpackConfig = {}
   const routes = path.resolve(matchaConfig.root, matchaConfig.src)
   const target = 'node'
   const mode = matchaConfig.mode
   const entry = routes
   const output = {
-    path: path.join(matchaConfig.root, matchaConfig.out),
+    path: path.join(matchaConfig.root, matchaConfig.out, 'routes'),
     libraryTarget: 'commonjs2',
     filename: 'index.js',
     chunkFilename: '[name].[contenthash].js'
@@ -158,7 +158,7 @@ export const createServerWebpackConfig = (matchaConfig: MatchaConfig, watch: boo
     devServer,
     optimization,
     devtool,
-    watch
+    watch: !!isDevServer
   })
   return webpackConfig
 }

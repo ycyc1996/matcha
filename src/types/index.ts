@@ -5,24 +5,19 @@ export interface MatchaConfig {
   env: string;
   mode: 'development' | 'production';
   root: string;
-  publish: string;
   src: string;
+  temp: string;
   out: string;
   staticPath: string;
   publicPath: string;
 }
 
-// export interface MatchaConfig {
-//   port: number;
-//   env: string;
-//   mode: string;
-//   root: string;
-//   publish: string;
-//   src: string;
-//   out: string;
-//   staticPath: string;
-//   publicPath: string;
-// }
+export interface ResourceController {
+  matchaConfig: MatchaConfig;
+  instance: any;
+  loadInstance: () => void;
+  getInstance: () => void;
+}
 
 export interface Route {
   patterns: string[];

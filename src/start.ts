@@ -4,16 +4,34 @@ import { MatchaConfig, ControllerFactory, RequestContext } from './types'
 import webpack from 'webpack'
 import webpackDevMiddleware from 'webpack-dev-middleware'
 import { createServerWebpackConfig, createClientWebpackConfig } from './webpack'
-import createRouter from './isomorphic/createRouter'
 import createApp from './isomorphic/createApp'
 import { renderToString } from 'react-dom/server'
+import { RouterController, AssetsController } from './resource'
+import process from 'process'
+
+process.on('exit', (code) => {
+  console.log(`退出码: ${code}`)
+})
 
 const getModuleAsync = async loader => {
   return (await loader()).default
 }
 
+const getDevAssets = (assetsByChunkName: object): Record<string, string> => {
+  return Object.keys(assetsByChunkName).reduce<Record<string, string>>((assets: Record<string, string>, chunkName: string) => {
+    return {
+      ...assets,
+      [chunkName]: Array.isArray(assetsByChunkName[chunkName]) ? assetsByChunkName[chunkName][0] : assetsByChunkName[chunkName]
+    }
+  }, {})
+}
+
 const startApp = (matchaConfig: MatchaConfig) => {
-  const { port, mode, root, src, publicPath, staticPath, out } = matchaConfig
+  const startMatchaConfig = {
+    ...matchaConfig,
+    out: matchaConfig.temp
+  }
+  const { port, mode, root, src, publicPath, staticPath, out } = startMatchaConfig
 
   const isProd = mode === 'production'
 
@@ -34,42 +52,40 @@ const startApp = (matchaConfig: MatchaConfig) => {
     app:
          -- publicPath: ${publicPath}
          -- staticPath: ${staticPath}
-         -- asserts: asserts
+         -- assets: assets
   `)
   })
 
-  let serverRouter = isDev ? createRouter([]) : createRouter(require(path.join(root, out)).default)
+  const routerCtrl = new RouterController(startMatchaConfig)
+  const assetsCtrl = new AssetsController(startMatchaConfig)
 
   if (isDev) {
-    webpack(createServerWebpackConfig(matchaConfig, true), async (err, stats: webpack.Stats) => {
+    webpack(createServerWebpackConfig(startMatchaConfig, true), async (err, stats: webpack.Stats) => {
       console.log(err)
       console.log(stats.toString({ colors: true }))
-      const { outputPath } = stats.toJson()
-      if (outputPath) {
-        const mainPath = path.resolve(outputPath, 'index')
-        delete require.cache[require.resolve(mainPath)]
-        const _routes = (require(mainPath)).default
-        serverRouter = createRouter(_routes)
-      }
+      routerCtrl.loadInstance()
     })
+  } else {
+    routerCtrl.loadInstance()
   }
 
   if (isDev) {
-    const clientWebpackConfig = createClientWebpackConfig(matchaConfig, true)
-    app.use(webpackDevMiddleware(webpack(clientWebpackConfig), {
-      publicPath: clientWebpackConfig.output.publicPath,
+    const staticDevMiddleware = webpackDevMiddleware(webpack(createClientWebpackConfig(startMatchaConfig, true)), {
+      publicPath: staticPath,
       serverSideRender: true,
       writeToDisk: true
-    }))
+    })
+    app.use(staticDevMiddleware)
   } else {
-    app.use(staticPath, express.static(path.join(root, out, staticPath)))
+    assetsCtrl.loadInstance()
+    app.use(staticPath, express.static(path.join(root, out, 'static')))
   }
 
   app.use(publicPath, async (req, res) => {
-    const asserts = isProd
-      ? require(path.join(root, out, staticPath, 'manifest.json'))
-      : res.locals.webpackStats.toJson().assetsByChunkName
+    const assets = isDev ? getDevAssets(res.locals.webpackStats.toJson().assetsByChunkName) : assetsCtrl.getInstance()
 
+    console.log(assets)
+    const serverRouter = routerCtrl.getInstance()
     const route = serverRouter(req.path)
 
     if (!route) {
@@ -94,12 +110,11 @@ const startApp = (matchaConfig: MatchaConfig) => {
     }
 
     const app = await createApp(AppCtrlClass as ControllerFactory<any>, context)
-
     const ctrl = app.getCtrl()
     context.prefetch.state = ctrl.store?.getState() || {}
     const content = ctrl.ssr ? renderToString(app.renderView()) : ''
-    const main = isProd ? asserts.main : asserts.main[0]
-    const vendor = isProd ? asserts.vendor : asserts.vendor[0]
+    const main = assets.main
+    const vendor = assets.vendor
     res.writeHead(200, { 'Content-Type': 'text/html;charset=utf-8' })
     res.end(`
       <html>

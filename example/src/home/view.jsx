@@ -2,8 +2,6 @@ import React from 'react'
 
 const View = ({ state, dispatchers, ctrl }) => {
 
-  console.log(ctrl)
-
   const onNameChange = (e) => dispatchers.UPDATE_FORM_DATA({ name: e.target.value })
 
   const onAgeChange = (e) => dispatchers.UPDATE_FORM_DATA({ age: e.target.value })
@@ -12,7 +10,7 @@ const View = ({ state, dispatchers, ctrl }) => {
   const ua = ctrl?.util?.getUserAgent(ctrl?.context)
   return (
     <div id="app-root">
-      <h1>我的主页</h1>
+      <h1>!!我的主页!!!</h1>
       <h1>{ua}</h1>
       <h2>count: { state.count }</h2>
       <div onClick={() => {

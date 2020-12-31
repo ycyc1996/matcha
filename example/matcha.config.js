@@ -5,8 +5,7 @@ module.exports = {
   root: __dirname,
   src: 'src',
   out: 'out',
-  publish: 'publish',
+  temp: 'temp',
   publicPath: '/app',
-  bundleName: 'server.bundle.js',
   staticPath: '/static'
 }

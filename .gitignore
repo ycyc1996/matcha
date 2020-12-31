@@ -1,9 +1,9 @@
 .DS_Store
 node_modules
-/dist
 
 /example/out
 /example/publish
+/example/temp
 
 comp-entry.js
 package-lock.json

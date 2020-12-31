@@ -51,7 +51,7 @@ const createApp = async (AppCtrlClass: ControllerFactory<any>, context: RequestC
   // }
 
   return {
-    renderView: () => <AppView/>,
+    renderView: () => <AppView />,
     getCtrl: () => ctrl
   }
 }
