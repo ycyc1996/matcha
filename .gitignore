@@ -5,6 +5,8 @@ node_modules
 /example/publish
 /example/temp
 
+/dist/*
+
 comp-entry.js
 package-lock.json
 
